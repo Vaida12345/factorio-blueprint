@@ -124,9 +124,9 @@ extension Blueprint: DetailedStringConvertible {
             descriptor.optional(for: \.snapToGrid)
             descriptor.optional(for: \.absoluteSnapping)
             descriptor.optional(for: \.positionRelativeToGrid)
-            descriptor.value(for: \.version)
             descriptor.optional(for: \.parameters)
             descriptor.optional(for: \.wires)
+            descriptor.value(for: \.version)
         }
     }
 }

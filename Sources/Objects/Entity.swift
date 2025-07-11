@@ -16,12 +16,17 @@ public final class Entity: Codable, Equatable {
     /// Prototype name of the entity (e.g. "offshore-pump").
     public var name: String
     
+    /// The quality of this entity.
+    ///
+    /// The quality is `normal` if not specified.
+    public var quality: Quality?
+    
     /// Position of the entity within the blueprint.
     public var position: Position
     
-    /// Direction of the entity
+    /// The direction the entity is facing.
     ///
-    /// - Note: If not specified, it is facing ``Direction/north``.
+    /// Only present for entities that can face in different directions and when the entity is not facing north.
     public var direction: Direction?
     
     /// Orientation of cargo wagon or locomotive
@@ -41,7 +46,7 @@ public final class Entity: Codable, Equatable {
     /// Item requests by this entity, this is what defines the item-request-proxy when the blueprint is placed
     ///
     /// Key is the name of the item, string. Value is the amount of items to be requested
-    public var items: [Item]?
+    public var items: [BlueprintInsertPlan]?
     
     /// Name of the recipe prototype this assembling machine is set to
     public var recipe: String?
@@ -122,6 +127,12 @@ public final class Entity: Codable, Equatable {
     
     public var use_filters: Bool?
     
+    /// Whether this entity is mirrored.
+    public var mirror: Bool?
+    
+    /// Wires connected to this entity in the blueprint.
+    public var wires: [Blueprint.Wire]?
+    
     
     public static func == (_ lhs: Entity, _ rhs: Entity) -> Bool {
         lhs.id == rhs.id &&
@@ -157,7 +168,10 @@ public final class Entity: Codable, Equatable {
         lhs.manual_trains_limit == rhs.manual_trains_limit &&
         lhs.switch_state == rhs.switch_state &&
         lhs.request_missing_construction_materials == rhs.request_missing_construction_materials &&
-        lhs.use_filters == rhs.use_filters
+        lhs.use_filters == rhs.use_filters &&
+        lhs.quality == rhs.quality &&
+        lhs.mirror == rhs.mirror &&
+        lhs.wires == rhs.wires
     }
     
     
@@ -171,6 +185,7 @@ public final class Entity: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id = "entity_number"
         case name
+        case quality
         case position
         case direction
         case orientation
@@ -204,6 +219,8 @@ public final class Entity: Codable, Equatable {
         case switch_state
         case request_missing_construction_materials
         case use_filters
+        case mirror
+        case wires
     }
     
     
@@ -221,17 +238,37 @@ public final class Entity: Codable, Equatable {
         public var quality: Quality
     }
     
-    public struct Item: Codable, Equatable {
+    /// Defines an item type that a blueprint entity will request.
+    public struct BlueprintInsertPlan: Codable, Equatable {
+        /// The prototype name and quality of the item to request.
         public var id: SignalID
-        public var items: Item
+        /// Describes the inventories to insert these items into.
+        public var items: ItemInventoryPositions
         
-        public struct Item: Codable, Equatable {
-            public var in_inventory: [Container]
+        public struct ItemInventoryPositions: Codable, Equatable {
+            /// A list of stacks into which items should be inserted.
+            public var in_inventory: [InventoryPosition]
             
+            /// Number of items to request for the equipment grid.
+            ///
+            /// When the items arrive they will be used to revive the first matching ghost equipment.
+            ///
+            /// Defaults to 0.
+            public var grid_count: Int?
             
-            public struct Container: Codable, Equatable {
+            public struct InventoryPosition: Codable, Equatable {
+                /// The ID of the inventory to insert into.
+                ///
+                /// - SeeAlso: [Definitions](https://lua-api.factorio.com/latest/defines.html#defines.inventory)
                 public var inventory: Int
+                
+                /// The stack index of the inventory to insert into. Uses 0-based indexing, in contrast to the 1-based indexing of most other inventory-related functions.
                 public var stack: Int
+                
+                /// How many items to insert.
+                ///
+                /// Defaults to 1.
+                public var count: Int?
             }
         }
     }
@@ -242,7 +279,7 @@ public final class Entity: Codable, Equatable {
 extension Entity: DetailedStringConvertible {
     
     public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity>) -> any DescriptionBlockProtocol {
-        descriptor.container(self.name + " | " + self.position.description) {
+        descriptor.container(self.name + (self.quality.map { " (\($0.rawValue))" } ?? "") + " | " + self.position.description) {
             descriptor.optional(for: \.direction)
             descriptor.optional(for: \.orientation)
             descriptor.optional(for: \.connections)
@@ -273,6 +310,8 @@ extension Entity: DetailedStringConvertible {
             descriptor.optional(for: \.switch_state)
             descriptor.optional(for: \.request_missing_construction_materials)
             descriptor.optional(for: \.use_filters)
+            descriptor.optional(for: \.mirror)
+            descriptor.optional(for: \.wires)
         }
     }
     
@@ -287,9 +326,9 @@ extension Entity.Filter: CustomStringConvertible {
 }
 
 
-extension Entity.Item: DetailedStringConvertible {
+extension Entity.BlueprintInsertPlan: DetailedStringConvertible {
     
-    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.Item>) -> any DescriptionBlockProtocol {
+    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.BlueprintInsertPlan>) -> any DescriptionBlockProtocol {
         descriptor.container(self.id.description) {
             descriptor.value(for: \.items)
         }
@@ -297,22 +336,24 @@ extension Entity.Item: DetailedStringConvertible {
 }
 
 
-extension Entity.Item.Item: DetailedStringConvertible {
+extension Entity.BlueprintInsertPlan.ItemInventoryPositions: DetailedStringConvertible {
     
-    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.Item.Item>) -> any DescriptionBlockProtocol {
+    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.BlueprintInsertPlan.ItemInventoryPositions>) -> any DescriptionBlockProtocol {
         descriptor.container {
             descriptor.value(for: \.in_inventory)
+            descriptor.value(for: \.grid_count)
         }
     }
 }
 
 
-extension Entity.Item.Item.Container: DetailedStringConvertible {
+extension Entity.BlueprintInsertPlan.ItemInventoryPositions.InventoryPosition: DetailedStringConvertible {
     
-    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.Item.Item.Container>) -> any DescriptionBlockProtocol {
+    public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Entity.BlueprintInsertPlan.ItemInventoryPositions.InventoryPosition>) -> any DescriptionBlockProtocol {
         descriptor.container {
             descriptor.value(for: \.inventory)
             descriptor.value(for: \.stack)
+            descriptor.value(for: \.count)
         }
     }
 }

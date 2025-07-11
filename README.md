@@ -91,12 +91,15 @@ let generatedString = try blueprint.makeBlueprintString()
 ### Type-safe parsing
 In this package, we introduced many wrapper structures, such as `wire`, that parses `rawValue` into human-readable format. Because this feature is introduced by this package, the naming conversion may be different to that of others.
 
-### ID resolving.
+### ID resolving
 Using the `resolve` method, you can retrieve the entity with a given `EntityID`, a wrapper around `UInt`, which serves as a reference to an entity.
 
 ```swift
 detailedPrint(blueprint.resolve(blueprint.wires!.first!.source))
 ```
+
+## Developer Notes
+The factorio 2.0 blueprint format is rather new, and [Factorio Wiki](https://wiki.factorio.com/Blueprint_string_format) has not yet updated their guides, hence you may find some properties missing. If so, don't hesitate to create a github issue, or, even better, create a pull request.
 
 ## Credits
 - [Factorio Wiki](https://wiki.factorio.com/Blueprint_string_format)
