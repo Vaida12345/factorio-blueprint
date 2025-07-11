@@ -8,6 +8,7 @@
 import DetailedDescription
 
 
+/// A blueprint entity.
 public final class Entity: Codable, Equatable {
     
     /// Index of the entity, 1-based.

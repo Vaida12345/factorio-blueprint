@@ -10,7 +10,7 @@ import Essentials
 import DetailedDescription
 
 
-///
+/// A blueprint.
 ///
 /// - SeeAlso: [wiki](https://wiki.factorio.com/Blueprint_string_format#Entity_object)
 public final class Blueprint: Codable, Equatable {

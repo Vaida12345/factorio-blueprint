@@ -8,7 +8,7 @@
 import Essentials
 import DetailedDescription
 
-
+/// A blueprint book.
 public final class BlueprintBook: Codable, Equatable {
     
     /// String, the name of the item that was saved ("blueprint-book" in vanilla).
