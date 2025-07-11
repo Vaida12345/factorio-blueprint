@@ -127,6 +127,14 @@ public struct ControlBehavior: Codable, Equatable {
     
     public var set_ignore_unlisted_targets: Bool?
     
+    public var circuit_enabled: Bool?
+    
+    public var index_constant: Int?
+    
+    public var select_max: Bool?
+    
+    public var operation: SelectorCombinator.Operation?
+    
     
     public init() {
         
@@ -152,6 +160,18 @@ public struct ControlBehavior: Codable, Equatable {
         public enum ResourceReadMode: Int, Codable, Equatable {
             case this_miner
             case entire_patch
+        }
+    }
+    
+    public struct SelectorCombinator {
+        public enum Operation: String, Codable, Equatable {
+            case selectInput = "select"
+            case random
+            case count
+            case rocketCapacity = "rocket-capacity"
+            case stackSize = "stack-size"
+            case qualityTransfer = "quality-transfer"
+            case qualityFilter = "quality-filter"
         }
     }
 }
@@ -201,6 +221,10 @@ extension ControlBehavior: DetailedStringConvertible {
             descriptor.optional(for: \.circuit_set_filters)
             descriptor.optional(for: \.ignore_unlisted_targets_condition)
             descriptor.optional(for: \.set_ignore_unlisted_targets)
+            descriptor.optional(for: \.circuit_enabled)
+            descriptor.optional(for: \.index_constant)
+            descriptor.optional(for: \.select_max)
+            descriptor.optional(for: \.operation)
         }
     }
 }

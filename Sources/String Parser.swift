@@ -18,16 +18,14 @@ struct BlueprintStringParser: Codable {
     
     static func parse(_ input: String) throws -> BlueprintStringParser {
         guard let data = Data(base64Encoded: String(input.dropFirst())) else { throw ParserError.corruptedString }
-        let header = data[0..<2]
-        print(header[0], header[0].data.binaryDigits) // CMF
-        print(header[1]) // FLG
-        print(header[0] >> 4) // 7
-        print(header[0] & 0b00001111) // 8
-        print(header[1] & 0b00011111)
-        print(header[1] >> 5 & 0b1)
-        print(header[1] >> 6 & 0b00000011) // compression level
         let inflated = try data.dropFirst(2).decompressed(using: .zlib)
-        return try BlueprintStringParser(data: inflated, format: .json)
+        print((try? JSONSerialization.jsonObject(with: inflated)) as Any)
+        do {
+            return try BlueprintStringParser(data: inflated, format: .json)
+        } catch {
+            print((try? JSONSerialization.jsonObject(with: inflated)) as Any)
+            throw error
+        }
     }
     
     func makeBlueprintString() throws -> String {

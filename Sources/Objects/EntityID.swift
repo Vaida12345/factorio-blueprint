@@ -6,10 +6,16 @@
 //
 
 
-/// An entity ID.
+/// A reference to an ``Entity``.
 ///
-/// - Experiment: It seems it is the unique ID of this entity in a local space.
-public struct EntityID: Identifiable, Codable, RawRepresentable, Sendable, CustomStringConvertible, Equatable {
+/// This is the unique ID of this entity in a local space. A blueprint string uses `EntityID` to refer to an entity. You can use `resolve` to retrieve an entity.
+///
+/// ```swift
+/// let blueprint = try Blueprint.parse(string)
+/// detailedPrint(blueprint)
+/// detailedPrint(blueprint.resolve(blueprint.wires!.first!.source))
+/// ```
+public struct EntityID: Identifiable, Codable, RawRepresentable, Sendable, CustomStringConvertible, Equatable, ExpressibleByIntegerLiteral {
     
     public var id: Int {
         self.rawValue
@@ -36,5 +42,8 @@ public struct EntityID: Identifiable, Codable, RawRepresentable, Sendable, Custo
         self.rawValue = try container.decode(Int.self)
     }
     
+    public init(integerLiteral value: IntegerLiteralType) {
+        self.init(rawValue: value)
+    }
     
 }

@@ -20,10 +20,14 @@ public final class Entity: Codable, Equatable {
     public var position: Position
     
     /// Direction of the entity
-    public var direction: Int?
+    ///
+    /// - Note: If not specified, it is facing ``Direction/north``.
+    public var direction: Direction?
     
     /// Orientation of cargo wagon or locomotive
-    public var orientation: Int?
+    ///
+    /// It has 8 directions, dividing a circle evenly clockwise in `[0, 1]`.
+    public var orientation: Double?
     
     /// Circuit connections.
     public var connections: Connection?
@@ -116,6 +120,8 @@ public final class Entity: Codable, Equatable {
     
     public var request_missing_construction_materials: Bool?
     
+    public var use_filters: Bool?
+    
     
     public static func == (_ lhs: Entity, _ rhs: Entity) -> Bool {
         lhs.id == rhs.id &&
@@ -150,7 +156,8 @@ public final class Entity: Codable, Equatable {
         lhs.station == rhs.station &&
         lhs.manual_trains_limit == rhs.manual_trains_limit &&
         lhs.switch_state == rhs.switch_state &&
-        lhs.request_missing_construction_materials == rhs.request_missing_construction_materials
+        lhs.request_missing_construction_materials == rhs.request_missing_construction_materials &&
+        lhs.use_filters == rhs.use_filters
     }
     
     
@@ -196,6 +203,7 @@ public final class Entity: Codable, Equatable {
         case manual_trains_limit
         case switch_state
         case request_missing_construction_materials
+        case use_filters
     }
     
     
@@ -264,6 +272,7 @@ extension Entity: DetailedStringConvertible {
             descriptor.optional(for: \.manual_trains_limit)
             descriptor.optional(for: \.switch_state)
             descriptor.optional(for: \.request_missing_construction_materials)
+            descriptor.optional(for: \.use_filters)
         }
     }
     

@@ -65,7 +65,7 @@ extension ArithmeticCombinatorParameters: CustomStringConvertible {
     public var description: String {
         var results = describe(first_signal, network: first_signal_networks, constant: first_constant)
         results += " " + (operation?.rawValue ?? "*").description
-        results += " " + results
+        results += " " + describe(second_signal, network: second_signal_networks, constant: second_constant)
         
         if let output_signal {
             results += " => " + output_signal.description

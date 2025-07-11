@@ -13,6 +13,7 @@ public enum ParserError: GenericError {
     case corruptedString
     case notBlueprint
     case notBlueprintBook
+    case invalidWireArrayLength(Int)
     
     public var message: String {
         switch self {
@@ -22,6 +23,8 @@ public enum ParserError: GenericError {
             "The blueprint string is not a blueprint"
         case .notBlueprintBook:
             "The blueprint string is not a blueprint book"
+        case .invalidWireArrayLength(let length):
+            "Invalid wire array length: \(length), expected 4"
         }
     }
 }

@@ -11,24 +11,27 @@ public struct ItemFilter: Codable, CustomStringConvertible, Equatable {
     /// Name of the item prototype this filter is set to
     public var target: String
     
+    public var quality: Quality
+    
+    public var comparator: CircuitCondition.Comparator
+    
     /// Index of the filter, 1-based.
     public var id: Int
     
     
     public var description: String {
-        "ItemFilter<#\(self.id)>(target: \(self.target))"
+        "\(comparator.rawValue) \(self.target) (\(self.quality))"
     }
     
     
-    public init(target: String, id: Int) {
-        self.target = target
-        self.id = id
-    }
+    
     
     
     enum CodingKeys: String, CodingKey {
         case target = "name"
         case id = "index"
+        case quality
+        case comparator
     }
     
     

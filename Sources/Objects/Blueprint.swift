@@ -51,6 +51,12 @@ public final class Blueprint: Codable, Equatable {
     /// The map version of the map the blueprint was created in.
     public var version: Version
     
+    /// The parameters of the blueprint, for generic blueprints.
+    public var parameters: [Parameter]?
+    
+    /// Wires in this blueprint
+    public var wires: [Wire]?
+    
     
     public static func == (_ lhs: Blueprint, _ rhs: Blueprint) -> Bool {
         lhs.item == rhs.item
@@ -65,6 +71,8 @@ public final class Blueprint: Codable, Equatable {
         && lhs.absoluteSnapping == rhs.absoluteSnapping
         && lhs.positionRelativeToGrid == rhs.positionRelativeToGrid
         && lhs.version == rhs.version
+        && lhs.parameters == rhs.parameters
+        && lhs.wires == rhs.wires
     }
     
     
@@ -81,6 +89,8 @@ public final class Blueprint: Codable, Equatable {
         case absoluteSnapping = "absolute-snapping"
         case positionRelativeToGrid = "position-relative-to-grid"
         case version
+        case parameters
+        case wires
     }
     
 }
@@ -104,8 +114,7 @@ extension Blueprint {
 extension Blueprint: DetailedStringConvertible {
     
     public func detailedDescription(using descriptor: DetailedDescription.Descriptor<Blueprint>) -> any DescriptionBlockProtocol {
-        descriptor.container {
-            descriptor.optional(for: \.label)
+        descriptor.container(self.label ?? "Blueprint") {
             descriptor.optional(for: \.labelColor)
             descriptor.sequence(for: \.entities)
             descriptor.optional(for: \.description)
@@ -116,6 +125,17 @@ extension Blueprint: DetailedStringConvertible {
             descriptor.optional(for: \.absoluteSnapping)
             descriptor.optional(for: \.positionRelativeToGrid)
             descriptor.value(for: \.version)
+            descriptor.optional(for: \.parameters)
+            descriptor.optional(for: \.wires)
         }
+    }
+}
+
+
+extension Blueprint {
+    
+    /// Resolves the id in the blueprint.
+    public func resolve(_ id: EntityID) -> Entity? {
+        entities.first { $0.id == id }
     }
 }

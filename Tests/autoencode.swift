@@ -19,7 +19,7 @@ struct AutoEncode {
         
         let model = try Blueprint.parse(string)
         let data = try model.makeBlueprintString() // Swift zlib can only encode level 5
-        #expect(data == "0eJxtztEKwjAMBdB/uc91aLWO9ldEZNMggS0dbSeO0n+3w4EvvoVwc24y+mGmKbAkuAy+e4lwl4zIT+mGdSfdSHBIoZM4+ZB2PQ0JRYHlQW+4Q7kqvChE9gJnztqerDXtXpvWagWSxInpq/63FCYfa2i9z6jkTjdGYanDsTFlM5abzGNPYWvkRGOlfu+X8gGKBEPU")
+        #expect(data == "0eJxtztEKwjAMBdB/uc91aLWO9ldEZNMggS0dbSeO0n+3w4EvvoVwc24y+mGmKbAkuAy+e4lwl4zIT+mGdSfdSHBIoZM4+ZB2PQ0JRYHlQW+4Q7kqvChE9gJnztqerDXtXpvWagWSxInpq/63FCYfa2i9z6jkTjdGYanDsTFlM5abzGNPYWvkRGOlfu+X8gGKBEPU") // tested on factorio
         #expect(try model == Blueprint.parse(data))
     }
     

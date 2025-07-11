@@ -80,8 +80,7 @@ extension BlueprintBook {
 extension BlueprintBook: DetailedStringConvertible {
     
     public func detailedDescription(using descriptor: DetailedDescription.Descriptor<BlueprintBook>) -> any DescriptionBlockProtocol {
-        descriptor.container {
-            descriptor.optional(for: \.label)
+        descriptor.container(self.label ?? "Blueprint Book") {
             descriptor.optional(for: \.labelColor)
             descriptor.sequence(for: \.blueprints)
             descriptor.value(for: \.activeIndex)
@@ -89,5 +88,19 @@ extension BlueprintBook: DetailedStringConvertible {
             descriptor.optional(for: \.description)
             descriptor.value(for: \.version)
         }
+    }
+}
+
+
+extension BlueprintBook {
+    
+    /// Resolves the id in the book.
+    public func resolve(_ id: EntityID) -> Entity? {
+        for blueprint in self.blueprints {
+            if let entity = blueprint.blueprint.resolve(id) {
+                return entity
+            }
+        }
+        return nil
     }
 }
