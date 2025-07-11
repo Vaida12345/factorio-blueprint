@@ -20,9 +20,11 @@ extension Blueprint {
         public var parameter: Bool?
         
         /// The value type.
-        public var type: `Type`
+        public var type: ParameterType
         
         public var not_parameterized: Bool?
+        
+        public var number: String?
         
         
         enum CodingKeys: String, CodingKey {
@@ -31,10 +33,10 @@ extension Blueprint {
             case parameter
             case type
             case not_parameterized = "not-parametrised"
+            case number
         }
         
-        
-        public enum `Type`: String, Codable {
+        public enum ParameterType: String, Codable {
             case id, number
         }
     }
@@ -50,6 +52,7 @@ extension Blueprint.Parameter: DetailedStringConvertible {
             descriptor.optional(for: \.id)
             descriptor.optional(for: \.parameter)
             descriptor.optional(for: \.not_parameterized)
+            descriptor.optional(for: \.number)
         }
     }
 }

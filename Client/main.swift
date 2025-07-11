@@ -15,8 +15,10 @@ let string = """
 """
 
 //let file = URL(fileURLWithPath: "/Users/vaida/Desktop/colossus.txt")
-//let data = try String(data: Data(contentsOf: file), encoding: .utf8)!
+//let string = try String(data: Data(contentsOf: file), encoding: .utf8)!
 //
 let blueprint = try Blueprint.parse(string)
 detailedPrint(blueprint)
-detailedPrint(blueprint.resolve(blueprint.wires!.first!.source))
+try print(blueprint.makeBlueprintString())
+//try blueprint.detailedDescription.write(toFile: "/Users/vaida/Desktop/colossus (parsed).txt", atomically: true, encoding: .utf8)
+//detailedPrint(blueprint.resolve(blueprint.wires!.first!.source))

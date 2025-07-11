@@ -19,7 +19,7 @@ struct BlueprintStringParser: Codable {
     static func parse(_ input: String) throws -> BlueprintStringParser {
         guard let data = Data(base64Encoded: String(input.dropFirst())) else { throw ParserError.corruptedString }
         let inflated = try data.dropFirst(2).decompressed(using: .zlib)
-        print((try? JSONSerialization.jsonObject(with: inflated)) as Any)
+//        print((try? JSONSerialization.jsonObject(with: inflated)) as Any)
         do {
             return try BlueprintStringParser(data: inflated, format: .json)
         } catch {
